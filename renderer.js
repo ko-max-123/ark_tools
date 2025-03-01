@@ -239,4 +239,5 @@ ipcRenderer.on('capture-success', (event, message) => {
 
 ipcRenderer.on('capture-error', (event, message) => {
   alert(`Error: ${message}`);
+  
 });

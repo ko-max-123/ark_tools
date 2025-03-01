@@ -35,5 +35,6 @@ ipcMain.on('capture-screen', (event) => {
     }
     console.log(stdout);
     event.reply('capture-success', 'キャプチャが成功しました');
+    
   });
 });

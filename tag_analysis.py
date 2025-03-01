@@ -51,7 +51,6 @@ def find_template_image(image_path):
     cv2.imwrite("processed_image.png", img)
     return img  # NumPy配列の形式で返す
 
-
 # アークナイツウィンドウキャプチャ
 from pywinauto import Desktop
 
