@@ -1,6 +1,6 @@
 {
-  "name": "electron-app",
-  "version": "1.0.0",
+  "name": "ark_tools",
+  "version": "0.4.5",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,13 +14,20 @@
       "output": "dist"
     },
     "files": [
+      "dist/tag_analysis.exe",
       "main.js",
       "renderer.js",
       "index.html",
       "ark_output.json",
       "node_modules/**/*"
     ],
-    "asar": false, 
+    "extraResources": [
+      {
+        "from": "dist/tag_analysis.exe",
+        "to": "tag_analysis.exe"
+      }
+    ],
+    "asar": false,
     "win": {
       "target": "nsis"
     }
@@ -33,6 +40,5 @@
   "devDependencies": {
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8"
-    
   }
 }

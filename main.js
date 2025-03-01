@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { exec } = require('child_process');
+const { execFile } = require('child_process'); // execFileをインポート
 
 let mainWindow;
 
@@ -22,7 +23,11 @@ app.on('ready', () => {
 
 ipcMain.on('capture-screen', (event) => {
   console.log('capture-screen event received'); // デバッグ用ログ
-  exec('python -c "from tag_analysis import capture_window; capture_window()"', (error, stdout, stderr) => {
+  // 実行可能ファイルのパスを指定
+  const exePath = path.join(process.resourcesPath, 'tag_analysis.exe');
+
+  // 実行可能ファイルを実行
+  execFile(exePath, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${error.message}`);
       event.reply('capture-error', error.message);
@@ -35,6 +40,5 @@ ipcMain.on('capture-screen', (event) => {
     }
     console.log(stdout);
     event.reply('capture-success', 'キャプチャが成功しました');
-    
   });
 });
