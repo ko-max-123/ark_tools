@@ -1,10 +1,13 @@
+from pywinauto import Desktop
+import win32gui
+import win32con
 from pywinauto import Application
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox
 from PIL import ImageGrab, Image
 import datetime
-import pytesseract
+#import pytesseract
 import cv2
 import numpy as np
 import re
@@ -59,10 +62,24 @@ def capture_window():
     try:
         app = Desktop(backend="uia").window(title_re=".*アークナイツ.*")
         app.set_focus()  # ウィンドウをフォーカス
+        
+        # ウィンドウハンドルを取得
+        hwnd = app.wrapper_object().handle
+        
+        # ウィンドウをメイン画面に移動
+        win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, 0, 0, 0, 0, win32con.SWP_NOSIZE | win32con.SWP_NOZORDER)
+
+        # ウィンドウを最大化
+        win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
+
+        # ウィンドウの位置とサイズを再取得
         rect = app.rectangle()
+        
+        # キャプチャを取得
         screenshot = ImageGrab.grab(bbox=(rect.left, rect.top, rect.right, rect.bottom))
         screenshot.save("captured_image.png")
-        #messagebox.showinfo("キャプチャ", "アークナイツのウィンドウがキャプチャされました。")
+        
+        # キャプチャ後の処理を実行
         start_analysis()
     except Exception as e:
         error_message = f"解析中にエラーが発生しました: {e}"
@@ -90,9 +107,9 @@ def analyze_image():
         return []
     processed_img_path = "processed_image.png"
     processed_img = find_template_image("captured_image.png")
-    extracted_text = pytesseract.image_to_string(
-        Image.open(processed_img_path), lang='jpn', config='--psm 6 --oem 1 -c preserve_interword_spaces=1'
-    )
+    #extracted_text = pytesseract.image_to_string(
+    #    Image.open(processed_img_path), lang='jpn', config='--psm 6 --oem 1 -c preserve_interword_spaces=1'
+    #)
     extracted_text = "" # とりあえずテキストファイルの中身を空にした対応 TODO
     # テンプレートマッチングで画像内検出
     if find_template_in_image("tag_img/zenei.png", processed_img):
