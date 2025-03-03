@@ -134,9 +134,10 @@ function displayResults(results) {
     //console.log('result.details:', result.details); // デバッグ用ログ
 
     const combinationContainer = document.createElement('div');
-    combinationContainer.className = 'container mt-4';
+    combinationContainer.className = 'tagoption container mt-4';
     const combinationLabel = document.createElement('div');
     combinationLabel.className = 'border p-3 text-center';
+    combinationLabel.style.backgroundColor = 'white'; // 背景色を白に設定
     combinationLabel.textContent = `タグの組み合わせ: ${result.combination.join('＋')}`;
     combinationContainer.appendChild(combinationLabel);
     resultContainer.appendChild(combinationContainer);
@@ -146,9 +147,11 @@ function displayResults(results) {
       //console.log('detail.name:', detail.name); // デバッグ用ログ
 
       const detailContainer = document.createElement('div');
+      detailContainer.className = 'col-2';
       detailContainer.style.display = 'inline-block';
       detailContainer.style.textAlign = 'center';
-      detailContainer.style.marginRight = '10px';
+      detailContainer.style.margin = '0 10px 5px 15px';
+      detailContainer.style.backgroundColor = 'white'; // 背景色を白に設定
 
       const img = document.createElement('img');
       img.width = 100;
@@ -160,43 +163,41 @@ function displayResults(results) {
       img.onerror = function() {
         const altDiv = document.createElement('div');
         altDiv.textContent = detail.name;
+        altDiv.className = 'clickable';
         altDiv.style.width = '100px';
         altDiv.style.height = '100px';
         altDiv.style.display = 'flex';
         altDiv.style.alignItems = 'center';
         altDiv.style.justifyContent = 'center';
         altDiv.style.border = '1px solid #ccc';
+        altDiv.addEventListener('click', () => {
+          ipcRenderer.send('open-detail-window', detail.name, detail.img);
+        });
+
         detailContainer.replaceChild(altDiv, img);
       };
 
+      // 画像クリックイベント
+      img.addEventListener('click', () => {
+        ipcRenderer.send('open-detail-window', detail.name, detail.img);
+      });
+
+      img.className = 'clickable';
       detailContainer.appendChild(img);
 
       const span = document.createElement('span');
-      span.style.display = 'flex';
+      span.style.display = 'grid';
       span.textContent = detail.name;
+      span.className = 'clickable';
+
+      // 名前クリックイベント
+      span.addEventListener('click', () => {
+        ipcRenderer.send('open-detail-window', detail.name, detail.img);
+      });
       detailContainer.appendChild(span);
 
       resultContainer.appendChild(detailContainer);
-  
-      // Add a line break after every 8 labels
-      //if ((detailIndex + 1) % 8 === 0) {
-      //    resultContainer.appendChild(document.createElement('br'));
-      //}
-      //resultContainer.appendChild(document.createElement('br'));
-
     })
-
-/*
-
-    const namesLabel = document.createElement('div');
-    const label = document.createElement('span');
-    namesLabel.className = 'badge badge-secondary m-2';
-    //namesLabel.textContent = result.names.join('　');
-    label.textContent = result.names.join('　');
-    namesLabel.appendChild(label);
-    combinationContainer.appendChild(namesLabel);
-
-*/
   });
 }
 
@@ -218,6 +219,8 @@ ipcRenderer.on('capture-success', (event, message) => {
   alert(message);
   // report.txtの内容を読み込んでボタンを選択状態にする
   const reportPath = path.join(__dirname, 'report.txt');
+  console.log('__dirname',__dirname); // デバッグ用ログ
+
   fs.readFile(reportPath, 'utf-8', (err, data) => {
     if (err) {
       console.error('Error reading report.txt:', err);
@@ -239,5 +242,5 @@ ipcRenderer.on('capture-success', (event, message) => {
 
 ipcRenderer.on('capture-error', (event, message) => {
   alert(`Error: ${message}`);
-  
+
 });

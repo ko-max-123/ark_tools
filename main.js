@@ -39,6 +39,27 @@ ipcMain.on('capture-screen', (event) => {
       return;
     }
     console.log(stdout);
-    event.reply('capture-success', 'キャプチャが成功しました');
+    event.reply('capture-success', 'キャプチャが終了しました');
+  });
+});
+
+ipcMain.on('open-detail-window', (event, name, img) => {
+  const detailWindow = new BrowserWindow({
+    width: 1000,
+    height: 1000,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+
+  detailWindow.loadFile('detail.html');
+
+  // 開発者ツールを自動的に開く
+  detailWindow.webContents.openDevTools();
+
+  // ウィンドウが読み込まれた後にデータを送信
+  detailWindow.webContents.on('did-finish-load', () => {
+    detailWindow.webContents.send('detail-data', name, img);
   });
 });
