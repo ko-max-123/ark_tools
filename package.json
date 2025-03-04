@@ -18,6 +18,7 @@
       "main.js",
       "renderer.js",
       "index.html",
+      "detail.html",
       "ark_output.json",
       "node_modules/**/*"
     ],

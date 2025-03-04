@@ -134,7 +134,7 @@ function displayResults(results) {
     //console.log('result.details:', result.details); // デバッグ用ログ
 
     const combinationContainer = document.createElement('div');
-    combinationContainer.className = 'tagoption container mt-4';
+    combinationContainer.className = 'tagoption container';
     const combinationLabel = document.createElement('div');
     combinationLabel.className = 'border p-3 text-center';
     combinationLabel.style.backgroundColor = 'white'; // 背景色を白に設定
