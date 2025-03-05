@@ -63,3 +63,25 @@ ipcMain.on('open-detail-window', (event, name, img) => {
     detailWindow.webContents.send('detail-data', name, img);
   });
 });
+
+
+ipcMain.on('open-item_detail-window', (event, itemId) => {
+  const item_detailWindow = new BrowserWindow({
+    width: 1000,
+    height: 1000,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+
+  item_detailWindow.loadFile('item_detail.html');
+
+  // 開発者ツールを自動的に開く
+  item_detailWindow.webContents.openDevTools();
+
+  // ウィンドウが読み込まれた後にデータを送信
+  item_detailWindow.webContents.on('did-finish-load', () => {
+    item_detailWindow.webContents.send('detail-data', itemId);
+  });
+});
