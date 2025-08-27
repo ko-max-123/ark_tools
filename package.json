@@ -1,0 +1,94 @@
+{
+  "name": "arktools",
+  "version": "1.0.0",
+  "description": "アークナイツ 募集条件解析ツール - 画面キャプチャとタグ自動認識で最適なオペレーターを検索",
+  "main": "main.js",
+      "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "electron .",
+      "start:dev": "NODE_ENV=development electron .",
+      "prebuild": "python setup_embedded_python.py",
+      "build": "electron-builder",
+      "prebuild:win": "python setup_embedded_python.py",
+      "build:win": "electron-builder --win",
+      "prebuild:mac": "python setup_embedded_python.py",
+      "build:mac": "electron-builder --mac",
+      "prebuild:linux": "python setup_embedded_python.py",
+      "build:linux": "electron-builder --linux",
+      "pack": "electron-builder --dir",
+      "predist": "python setup_embedded_python.py",
+      "dist": "electron-builder",
+      "setup:python": "python setup_embedded_python.py"
+    },
+  "build": {
+    "appId": "com.arktools.app",
+    "productName": "Arktools",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "renderer.js",
+      "index.html",
+      "ark_output.json",
+      "tag_analysis.py",
+      "setup_embedded_python.py",
+      "requirements.txt",
+      "report.txt",
+      "img/**/*",
+      "tag_img/**/*",
+      "embedded_python/**/*",
+      "node_modules/**/*"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "tag_analysis.py",
+      "setup_embedded_python.py",
+      "requirements.txt",
+      "report.txt",
+      "img/**/*",
+      "tag_img/**/*",
+      "embedded_python/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "compression": "maximum",
+    "removePackageScripts": true,
+    "removePackageKeywords": true
+  },
+  "keywords": [
+    "arknights",
+    "gaming",
+    "tool",
+    "recruitment",
+    "operator",
+    "analysis"
+  ],
+  "author": "Arktools Team",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "pywin32": "^306"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

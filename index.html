@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arktools - 募集条件解析</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #6366f1;
+      --secondary-color: #8b5cf6;
+      --accent-color: #06b6d4;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --dark-color: #1f2937;
+      --light-color: #f8fafc;
+      --border-radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --sidebar-width: 320px;
+      --header-height: 140px;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+
+    .main-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      margin: 1rem;
+      height: calc(100vh - 2rem);
+      overflow: hidden;
+      animation: slideInUp 0.8s ease-out;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      height: var(--header-height);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+      animation: fadeInDown 1s ease-out 0.2s both;
+    }
+
+    .header p {
+      font-size: 1rem;
+      margin: 0.25rem 0 0 0;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 1s ease-out 0.4s both;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .btn-capture {
+      background: linear-gradient(135deg, var(--success-color), #059669);
+      border: none;
+      border-radius: 25px;
+      color: white;
+      font-weight: 600;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-capture::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-capture:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-capture:hover::before {
+      left: 100%;
+    }
+
+    .btn-reset {
+      background: linear-gradient(135deg, var(--danger-color), #dc2626);
+      border: none;
+      border-radius: 25px;
+      color: white;
+      font-weight: 600;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-reset::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-reset:hover {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-reset:hover::before {
+      left: 100%;
+    }
+
+    .content-wrapper {
+      display: flex;
+      height: calc(100vh - var(--header-height) - 2rem);
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: white;
+      border-right: 1px solid #e2e8f0;
+      overflow-y: auto;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--secondary-color);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .section {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease-out both;
+    }
+
+    .section:nth-child(1) { animation-delay: 0.1s; }
+    .section:nth-child(2) { animation-delay: 0.2s; }
+    .section:nth-child(3) { animation-delay: 0.3s; }
+    .section:nth-child(4) { animation-delay: 0.4s; }
+
+    .section:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .section-header {
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      border-bottom: 1px solid #e2e8f0;
+      color: var(--dark-color);
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-header i {
+      color: var(--primary-color);
+      width: 20px;
+      text-align: center;
+    }
+
+    .section-content {
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      align-items: start;
+    }
+
+    .tag-button {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 25px;
+      color: var(--dark-color);
+      font-weight: 500;
+      margin: 0;
+      padding: 0.5rem 0.75rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.9rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .tag-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .tag-button:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    }
+
+    .tag-button:hover::before {
+      left: 100%;
+    }
+
+    .tag-button.btn-selected {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      transform: translateY(-1px);
+      animation: selectPulse 0.6s ease-out;
+    }
+
+    @keyframes selectPulse {
+      0% { transform: scale(1) translateY(-1px); }
+      50% { transform: scale(1.05) translateY(-1px); }
+      100% { transform: scale(1) translateY(-1px); }
+    }
+
+    .tag-button:active {
+      transform: scale(0.95);
+    }
+
+    .results-area {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    }
+
+    .results-area::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .results-area::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+
+    .results-area::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 4px;
+    }
+
+    .results-area::-webkit-scrollbar-thumb:hover {
+      background: var(--secondary-color);
+    }
+
+    .results-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .result-section {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      animation: slideInRight 0.6s ease-out;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .result-header {
+      background: linear-gradient(135deg, var(--accent-color), #0891b2);
+      color: white;
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .result-content {
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      justify-items: center;
+    }
+
+    .operator-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      min-width: 120px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .operator-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .operator-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-color);
+    }
+
+    .operator-card:hover::before {
+      left: 100%;
+    }
+
+    .operator-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 0.5rem;
+      border: 3px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .operator-card:hover .operator-image {
+      border-color: var(--primary-color);
+      transform: scale(1.05);
+    }
+
+    .operator-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--dark-color);
+      margin: 0;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      color: var(--primary-color);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #6b7280;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h5 {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    .empty-state p {
+      margin: 0;
+      opacity: 0.8;
+    }
+
+    .selection-counter {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(99, 102, 241, 0.9);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      animation: slideInLeft 0.5s ease-out;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .notification {
+      animation: slideInRight 0.5s ease-out;
+    }
+
+    /* レスポンシブデザインの強化 */
+    @media (max-width: 1400px) {
+      :root {
+        --sidebar-width: 280px;
+      }
+      
+      .result-content {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 0.75rem;
+      }
+      
+      .operator-card {
+        min-width: 100px;
+        padding: 0.75rem;
+      }
+      
+      .operator-image {
+        width: 60px;
+        height: 60px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      :root {
+        --sidebar-width: 260px;
+        --header-height: 120px;
+      }
+      
+      .main-container {
+        margin: 0.5rem;
+        height: calc(100vh - 1rem);
+      }
+      
+      .header {
+        padding: 1rem 1.5rem;
+        height: var(--header-height);
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .header p {
+        font-size: 0.9rem;
+      }
+      
+      .header-actions {
+        margin-top: 0.5rem;
+      }
+      
+      .btn-capture,
+      .btn-reset {
+        padding: 0.375rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .content-wrapper {
+        height: calc(100vh - var(--header-height) - 1rem);
+      }
+      
+      .sidebar {
+        padding: 1rem;
+      }
+      
+      .section-content {
+        padding: 1rem;
+        gap: 0.25rem;
+      }
+      
+      .tag-button {
+        margin: 0;
+        padding: 0.375rem 0.5rem;
+        font-size: 0.8rem;
+      }
+      
+      .results-area {
+        padding: 1rem;
+      }
+      
+      .result-content {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.5rem;
+        padding: 1rem;
+      }
+      
+      .operator-card {
+        min-width: 80px;
+        padding: 0.5rem;
+      }
+      
+      .operator-image {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .operator-name {
+        font-size: 0.8rem;
+      }
+      
+      .selection-counter {
+        top: 10px;
+        left: 10px;
+        font-size: 0.8rem;
+        padding: 0.375rem 0.75rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --sidebar-width: 100%;
+        --header-height: 140px;
+      }
+      
+      .content-wrapper {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+        max-height: 35vh;
+        overflow-y: auto;
+        padding: 1rem;
+      }
+      
+      .sidebar-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-color);
+      }
+      
+      .sidebar-header h3 {
+        font-size: 1.1rem;
+        margin: 0;
+        color: var(--primary-color);
+        text-align: center;
+      }
+      
+      .section {
+        margin-bottom: 1.5rem;
+      }
+      
+      .section-header {
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+        margin-bottom: 0.75rem;
+      }
+      
+      .section-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        padding: 0.5rem;
+      }
+      
+      .tag-button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        border-radius: 20px;
+        margin: 0;
+      }
+      
+      .results-area {
+        flex: 1;
+        padding: 1rem;
+      }
+      
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .header-actions {
+        flex-direction: row;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      
+      .btn-capture,
+      .btn-reset {
+        padding: 0.375rem 1rem;
+        font-size: 0.85rem;
+        flex: 1;
+        max-width: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --header-height: 120px;
+      }
+      
+      .main-container {
+        margin: 0.5rem;
+        height: calc(100vh - 1rem);
+      }
+      
+      .header {
+        padding: 1rem;
+      }
+      
+      .header h1 {
+        font-size: 1.3rem;
+      }
+      
+      .header p {
+        font-size: 0.8rem;
+      }
+      
+      .header-actions {
+        margin-top: 0.5rem;
+        gap: 0.25rem;
+      }
+      
+      .btn-capture,
+      .btn-reset {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
+        max-width: 120px;
+      }
+      
+      .sidebar {
+        max-height: 30vh;
+        padding: 0.75rem;
+      }
+      
+      .sidebar-header h3 {
+        font-size: 1rem;
+      }
+      
+      .section-content {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+        padding: 0.25rem;
+      }
+      
+      .tag-button {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+      }
+      
+      .results-area {
+        padding: 0.75rem;
+      }
+      
+      .result-content {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 0.25rem;
+        padding: 0.5rem;
+      }
+      
+      .operator-card {
+        min-width: 70px;
+        padding: 0.25rem;
+      }
+      
+      .operator-image {
+        width: 45px;
+        height: 45px;
+      }
+      
+      .operator-name {
+        font-size: 0.7rem;
+      }
+      
+      .selection-counter {
+        top: 5px;
+        left: 5px;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 15px;
+      }
+    }
+
+    /* パフォーマンス最適化 */
+    .operator-card {
+      will-change: transform;
+    }
+    
+    .tag-button {
+      will-change: transform, box-shadow;
+    }
+    
+    /* スムーズスクロール */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* フォーカス表示の改善 */
+    .tag-button:focus,
+    .operator-card:focus {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+    
+    /* 選択状態の視覚的フィードバック */
+    .tag-button.btn-selected {
+      position: relative;
+    }
+
+    /* 追加のアニメーション効果 */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0.7; transform: scale(0.95); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* スクリーンリーダー用の非表示クラス */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* パフォーマンス最適化のためのスタイル */
+    .operator-card img {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+
+    /* 高解像度ディスプレイ対応 */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      .operator-image {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+      }
+    }
+
+    /* プリント用スタイル */
+    @media print {
+      .header-actions,
+      .selection-counter,
+      .notification {
+        display: none !important;
+      }
+      
+      .main-container {
+        box-shadow: none;
+        margin: 0;
+      }
+      
+      .operator-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+
+    /* アニメーション無効化設定への対応 */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* フォーカス表示の改善（Windows High Contrast Mode対応） */
+    @media (forced-colors: active) {
+      .tag-button:focus,
+      .operator-card:focus {
+        outline: 2px solid CanvasText;
+        outline-offset: 2px;
+      }
+      
+      .tag-button.btn-selected {
+        forced-color-adjust: none;
+        background: Highlight;
+        color: HighlightText;
+      }
+    }
+
+    /* 使用方法セクションのスタイル */
+    .usage-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .usage-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .step-number {
+      background: var(--primary-color);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .step-content h5 {
+      margin: 0 0 0.5rem 0;
+      color: var(--dark-color);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .step-content p {
+      margin: 0.25rem 0;
+      font-size: 0.8rem;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    .warning-text {
+      color: var(--warning-color) !important;
+      font-weight: 500;
+      font-size: 0.75rem;
+    }
+
+    .step-content strong {
+      color: var(--dark-color);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <div class="header">
+      <h1><i class="fas fa-search"></i> Arktools</h1>
+      <p>アークナイツ 募集条件解析ツール</p>
+      
+      <div class="header-actions">
+        <button id="capture" class="btn-capture">
+          <i class="fas fa-camera me-2"></i>キャプチャ開始
+        </button>
+        <button id="reset" class="btn-reset">
+          <i class="fas fa-redo me-2"></i>リセット
+        </button>
+      </div>
+    </div>
+
+    <div class="content-wrapper">
+      <!-- 左サイドバー -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h3><i class="fas fa-tags"></i> タグ選択</h3>
+        </div>
+        
+        <div class="section">
+          <div class="section-header">
+            <i class="fas fa-tags"></i>タイプ
+          </div>
+          <div class="section-content">
+            <button class="tag-button" data-category="type">先鋒タイプ</button>
+            <button class="tag-button" data-category="type">前衛タイプ</button>
+            <button class="tag-button" data-category="type">狙撃タイプ</button>
+            <button class="tag-button" data-category="type">重装タイプ</button>
+            <button class="tag-button" data-category="type">医療タイプ</button>
+            <button class="tag-button" data-category="type">補助タイプ</button>
+            <button class="tag-button" data-category="type">術師タイプ</button>
+            <button class="tag-button" data-category="type">特殊タイプ</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <i class="fas fa-crosshairs"></i>位置
+          </div>
+          <div class="section-content">
+            <button class="tag-button" data-category="position">近距離</button>
+            <button class="tag-button" data-category="position">遠距離</button>
+      </div>
+    </div>
+
+        <div class="section">
+          <div class="section-header">
+            <i class="fas fa-star"></i>その他
+          </div>
+          <div class="section-content">
+            <button class="tag-button" data-category="other">火力</button>
+            <button class="tag-button" data-category="other">防御</button>
+            <button class="tag-button" data-category="other">COST回復</button>
+            <button class="tag-button" data-category="other">範囲攻撃</button>
+            <button class="tag-button" data-category="other">生存</button>
+            <button class="tag-button" data-category="other">治療</button>
+            <button class="tag-button" data-category="other">支援</button>
+            <button class="tag-button" data-category="other">弱化</button>
+            <button class="tag-button" data-category="other">減速</button>
+            <button class="tag-button" data-category="other">強制移動</button>
+            <button class="tag-button" data-category="other">牽制</button>
+            <button class="tag-button" data-category="other">爆発力</button>
+            <button class="tag-button" data-category="other">召喚</button>
+            <button class="tag-button" data-category="other">高速再配置</button>
+            <button class="tag-button" data-category="other">初期</button>
+            <button class="tag-button" data-category="other">ロボット</button>
+            <button class="tag-button" data-category="other">元素</button>
+      </div>
+    </div>
+
+        <div class="section">
+          <div class="section-header">
+            <i class="fas fa-crown"></i>確定
+          </div>
+          <div class="section-content">
+            <button class="tag-button" data-category="rarity">エリート</button>
+            <button class="tag-button" data-category="rarity">上級エリート</button>
+          </div>
+        </div>
+
+        <!-- 使用方法セクション -->
+        <div class="section">
+          <div class="section-header">
+            <i class="fas fa-info-circle"></i>使用方法
+          </div>
+          <div class="section-content">
+            <div class="usage-info">
+              <div class="usage-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <h5>ウィンドウサイズ調整</h5>
+                  <p><strong>推奨:</strong> 1024x768 以上</p>
+                  <p><strong>最小:</strong> 800x600</p>
+                  <p class="warning-text">⚠️ 小さいと精度低下</p>
+                </div>
+              </div>
+              <div class="usage-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <h5>募集画面表示</h5>
+                  <p>リクルート画面を開く</p>
+                  <p>タグが表示されている状態にする</p>
+                </div>
+              </div>
+              <div class="usage-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <h5>キャプチャ実行</h5>
+                  <p>「キャプチャ開始」ボタンをクリック</p>
+                  <p>自動的にタグ解析が実行されます</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- メインコンテンツエリア -->
+      <div class="main-content">
+        <div class="loading-spinner" id="loading">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">読み込み中...</span>
+          </div>
+          <p class="mt-2 text-muted">解析中...</p>
+        </div>
+
+        <div class="results-area">
+          <div id="result-container" class="results-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

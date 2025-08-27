@@ -1,0 +1,43 @@
+# Build output
+dist/
+
+# Image files
+img/
+
+# Dependencies
+node_modules/
+
+# Log files
+error_log.txt
+
+# Embedded Python environment
+embedded_python/
+python_packages/
+python-*.zip
+Python-*.tgz
+get-pip.py
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
